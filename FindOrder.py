@@ -1,7 +1,9 @@
 # coding: utf-8
 
 import os
+import sys
 import glob
+import time
 from openpyxl import load_workbook
 
 
@@ -19,8 +21,11 @@ if len(filelist) == 0:
     print('Error ! No order files exist in the folder !')
 
 else:
-    # Get order name from input
-    string_need = input("Enter the order you want to find: \n")
+    # Get order name from a prompt input
+    # string_need = input("Enter the order you want to find: \n")
+
+    # Get order name from argumentq
+    string_need = sys.argv[1]
 
     # Load xlsx file
     for f in glob.glob(folderpath + "/*.xlsx"):
@@ -36,7 +41,12 @@ else:
                 celldata = sheet_now.cell(n, 1).value   # Read data of each cell in first column
 
                 if celldata is not None and string_need in celldata:
-                    print('row', n, 'in file :', os.path.split(f)[1], '(sheet:', sheetnames[m], '), Order Name:', celldata)
+
+                    time_file_created = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(os.path.getmtime(f)))
+
+                    print('row', n, 'in file :', os.path.split(f)[1], '(sheet:', sheetnames[m],
+                          '), Order Name:', celldata, ', Created at', time_file_created)
+
                     file_counter = file_counter + 1
 
     if file_counter == 0:
